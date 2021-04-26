@@ -68,6 +68,10 @@ public class Board {
     public boolean makeMove(int chosenHole, int side) {
         if (side == 1) {
             int numberOfPebbles = player1side[chosenHole];
+            if (numberOfPebbles == 0) {
+                System.out.println("It shouldn't be clicked!!");
+                return true;
+            }
             player1side[chosenHole] = 0;
             for (int i = chosenHole + 1; i < player1side.length; i++) {
                 player1side[i]++;
@@ -119,6 +123,10 @@ public class Board {
 
         } else if (side == 2) {
             int numberOfPebbles = player2side[chosenHole];
+            if (numberOfPebbles == 0) {
+                System.out.println("It shouldn't be clicked!!");
+                return true;
+            }
             player2side[chosenHole] = 0;
             for (int i = chosenHole - 1; i >= 0; i--) {
                 player2side[i]++;
@@ -141,7 +149,7 @@ public class Board {
                     return true;
                 }
 
-                for (int i = 1; i < player1side.length; i++) {
+                for (int i = 0; i < player1side.length; i++) {
                     if (numberOfPebbles > 0) {
                         player1side[i]++;
                         numberOfPebbles--;
@@ -169,7 +177,7 @@ public class Board {
 
         }
 
-        System.out.println("Somthing gone wrong, move not repeated");
+        System.out.println("Something gone wrong, move not repeated");
         return false;
     }
 }

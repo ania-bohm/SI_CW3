@@ -1,8 +1,6 @@
 public class Engine {
-    Game game;
 
-    public Engine(Game game, int evaluateBoardHeuristic) {
-        this.game = game;
+    public Engine(int evaluateBoardHeuristic) {
 
     }
 
@@ -38,16 +36,9 @@ public class Engine {
         }
     }
 
-    public int makeMove(Player player) {
-        if (player.isHuman()) {
-            //wywołanie akcji zagrania gracza
-        } else {
-            makeMoveAI(game.getBoard(), player);
-        }
-        return 0;
-    }
 
-    private int makeMoveAI(Board board, Player player) { //moveAlgorithm min-max - 0, alpha-beta - 1
+
+    protected int makeMoveAI(Board board, Player player) { //moveAlgorithm min-max - 0, alpha-beta - 1
         boolean maximizingPlayer;
         if (player.getPlayerNumber() == 1) {
             maximizingPlayer = true;
