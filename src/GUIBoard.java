@@ -88,8 +88,8 @@ public class GUIBoard {
         jButtonHumanAI2.setText("Człowiek");
         jButtonAIAlgorithm1.setText("Min-Max");
         jButtonAIAlgorithm2.setText("Min-Max");
-        jSpinnerAILvl1 = new JSpinner(new SpinnerNumberModel(2, 1, 5, 1));
-        jSpinnerAILvl2 = new JSpinner(new SpinnerNumberModel(2, 1, 5, 1));
+        jSpinnerAILvl1 = new JSpinner(new SpinnerNumberModel(2, 1, 7, 1));
+        jSpinnerAILvl2 = new JSpinner(new SpinnerNumberModel(2, 1, 7, 1));
 
         jButtonAIAlgorithm1.setEnabled(false);
         jSpinnerAILvl1.setEnabled(false);
@@ -113,7 +113,8 @@ public class GUIBoard {
             @Override
             public void actionPerformed(ActionEvent e) {
                 player1 = new Player(1, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl1.getValue(), 0);
-                player2 = new Player(2, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), 0);
+                player2 = new Player(2, jButtonHumanAI2.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), 0);
+
                 game = new Game(board, player1, player2);
                 synchronized (GUIBoard.this) {
                     jFrame.dispose();
@@ -441,7 +442,7 @@ public class GUIBoard {
     }
 
     public void playersTurn(Player player) {
-        System.out.println("Kolorowanie");
+//        System.out.println("Kolorowanie");
         switch (player.getPlayerNumber()) {
             case 1:
                 buttonPlayer1_0.setBackground(Color.green);

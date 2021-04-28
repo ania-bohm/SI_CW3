@@ -1,26 +1,40 @@
 public class Engine {
-
     public Engine(int evaluateBoardHeuristic) {
 
     }
 
 
-    public int evaluateBoard(int evaluationHeuristics) {
-        switch (evaluationHeuristics) {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
+    public int evaluateBoard(int evaluationHeuristics, Board board) {
+//        switch (evaluationHeuristics) {
+//            case 0:
+//                break;
+//            case 1:
+//                break;
+//            case 2:
+//                break;
+//        }
+
+        return (evaluateBoardWinnerHeuristic(board) + evaluateBoardWellDifferenceHeuristic(board));
+    }
+
+    public int evaluateBoardWinnerHeuristic(Board board) {
+        if (board.getPlayer1well() > 24) {
+            return 100;
+        } else if (board.getPlayer2well() > 24) {
+            return -100;
         }
         return 0;
     }
 
+    public int evaluateBoardWellDifferenceHeuristic(Board board) {
+        return board.getPlayer1well() - board.getPlayer2well();
+    }
+
+
     public boolean isGameOver(Board board, int player) {
         if (player == 1) {
             for (int i = 0; i < board.getPlayer1side().length; i++) {
-                System.out.print(board.getPlayer1side()[i] + " ");
+//                System.out.print(board.getPlayer1side()[i] + " ");
                 if (board.getPlayer1side()[i] > 0) {
                     return false;
                 }
@@ -78,34 +92,76 @@ public class Engine {
 
     protected int makeMoveAI(Board board, Player player) { //moveAlgorithm min-max - 0, alpha-beta - 1
         boolean maximizingPlayer;
+        int chosenMove = -1;
+        int bestValue;
+
         if (player.getPlayerNumber() == 1) {
             maximizingPlayer = true;
+            bestValue = -10000;
         } else {
             maximizingPlayer = false;
+            bestValue = 10000;
         }
-        int chosenMove = 0;
-        switch (player.getMoveAlgorithm()) {
-            case 0:
-                for (int i = 0; i < board.getPlayer1side().length; i++) {
-                    Board boardAfterMove = new Board(board);
-                    if (isMovePossible(boardAfterMove, player.getPlayerNumber(), i)) {
 
-                    }
+        for (int i = 0; i < board.getPlayer1side().length; i++) {
+            Board boardAfterMove = new Board(board);
+            if (isMovePossible(boardAfterMove, player.getPlayerNumber(), i)) {
+                switch (player.getMoveAlgorithm()) {
+                    //start min-max
+                    case 0:
+                        int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer);
+                        System.out.println(currentValue);
+                        if (maximizingPlayer) {
+                            if (bestValue < currentValue) {
+                                chosenMove = i;
+                                bestValue = currentValue;
+                            }
+                            break;
+                        } else {
+                            if (bestValue > currentValue) {
+                                chosenMove = i;
+                                bestValue = currentValue;
+                            }
+                        }
+                        break;
                 }
-                return minMax(board, player.getLvlAI(), maximizingPlayer);
-            case 1:
-                return alphaBeta();
+            }
         }
-        return 0;
+        return chosenMove;
     }
 
+
     public int minMax(Board board, int depth, boolean maximizingPlayer) {
-        if (depth == 0 || board.isGameOver()) {
-            //return evaluateBoard();
-            //chwilowo
-            return 1;
+        int player;
+        if (maximizingPlayer) {
+            player = 1;
+        } else {
+            player = 2;
         }
-        return 0;
+        if (depth == 0 || this.isGameOver(board, player)) {
+            return evaluateBoard(0, board);
+        }
+        int value;//około plus nieskończoność
+        if (maximizingPlayer) {
+            value = -100000;
+            for (int i = 0; i < board.getPlayer1side().length; i++) {
+                Board boardAfterMove = new Board(board);
+                if (isMovePossible(boardAfterMove, 1, i)) {
+                    boolean again = boardAfterMove.makeMove(i, 1);
+                    value = Math.max(value, minMax(boardAfterMove, depth - 1, maximizingPlayer == again));
+                }
+            }
+        } else {
+            value = 100000;
+            for (int i = 0; i < board.getPlayer2side().length; i++) {
+                Board boardAfterMove = new Board(board);
+                if (isMovePossible(boardAfterMove, 2, i)) {
+                    boolean again = boardAfterMove.makeMove(i, 2);
+                    value = Math.min(value, minMax(boardAfterMove, depth - 1, maximizingPlayer == again));
+                }
+            }
+        }
+        return value;
     }
 
     public int alphaBeta() {

@@ -29,13 +29,13 @@ public class Game {
     }
 
     public void gameplay(GUIBoard gui) {
-        System.out.println("in gameplay");
+//        System.out.println("in gameplay");
         Player[] players = new Player[2];
         players[0] = player1;
         players[1] = player2;
         int playerToMoveIndex = choosePlayerToStart();
         while (!board.isGameOver()) {
-            while (makeMove(players[playerToMoveIndex], gui) && !board.isGameOver()) {
+            while (makeMove(players[playerToMoveIndex], gui) /*&& !board.isGameOver()*/) {
             }
             playerToMoveIndex = (playerToMoveIndex + 1) % 2;
         }
@@ -46,14 +46,14 @@ public class Game {
     }
 
     public boolean makeMove(Player player, GUIBoard gui) {
-        System.out.println("In makeMove");
+//        System.out.println("In makeMove");
         gui.playersTurn(player);
 
         boolean repeatMove;
         if (player.isHuman()) {
             synchronized (gui) {
                 try {
-                    System.out.println("In gui wait in makeMove");
+//                    System.out.println("In gui wait in makeMove");
                     gui.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
