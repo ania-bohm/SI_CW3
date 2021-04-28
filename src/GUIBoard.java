@@ -5,20 +5,28 @@ import java.awt.event.ActionListener;
 
 public class GUIBoard {
     JFrame jFrame;
-    JPanel jPanel;
+    JPanel jPanel, jPanelBoard;
     JButton buttonPlayer1_0, buttonPlayer1_1, buttonPlayer1_2, buttonPlayer1_3, buttonPlayer1_4, buttonPlayer1_5, buttonPlayer2_0, buttonPlayer2_1, buttonPlayer2_2, buttonPlayer2_3, buttonPlayer2_4, buttonPlayer2_5;
     JLabel labelPlayer2Well, labelPlayer1Well;
     int chosenMove;
+    Board board;
+    Player player1;
+    Player player2;
+    Game game;
+    boolean replay = false;
+    boolean exitGame = false;
 
-    public GUIBoard(Board board) {
+    public GUIBoard() {
         jFrame = new JFrame();
         jFrame.setResizable(false);
-
-        jPanel = new JPanel();
-        jPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        jPanel.setPreferredSize(new Dimension(800, 340));
-        jPanel.setLayout(new GridLayout(0, 8, 1, 1));
-
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.setTitle("Mankala Game");
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setVisible(true);
+        board = new Board(6);
+        board.initialiseBoard(4);
+        jPanelBoard = new JPanel();
         labelPlayer1Well = new JLabel(String.valueOf(board.getPlayer1well()), SwingConstants.CENTER);
         labelPlayer2Well = new JLabel(String.valueOf(board.getPlayer2well()), SwingConstants.CENTER);
 
@@ -35,7 +43,6 @@ public class GUIBoard {
         buttonPlayer2_4 = new JButton(String.valueOf(board.getPlayer2side()[4]));
         buttonPlayer2_5 = new JButton(String.valueOf(board.getPlayer2side()[5]));
 
-        humanMakeMove();
         buttonPlayer1_0.setPreferredSize(new Dimension(10, 10));
         buttonPlayer2_0.setPreferredSize(new Dimension(10, 10));
         buttonPlayer1_1.setPreferredSize(new Dimension(10, 10));
@@ -49,35 +56,233 @@ public class GUIBoard {
         buttonPlayer1_4.setPreferredSize(new Dimension(10, 10));
         buttonPlayer2_5.setPreferredSize(new Dimension(10, 10));
 
-        jPanel.add(new JLabel());
-        jPanel.add(buttonPlayer2_0);
-        jPanel.add(buttonPlayer2_1);
-        jPanel.add(buttonPlayer2_2);
-        jPanel.add(buttonPlayer2_3);
-        jPanel.add(buttonPlayer2_4);
-        jPanel.add(buttonPlayer2_5);
-        jPanel.add(new JLabel());
-        jPanel.add(labelPlayer2Well);
+        initialiseGameListeners();
+    }
 
-        for (int i = 0; i < 6; i++) {
-            jPanel.add(new JLabel());
-        }
+    public void gameStartScreen() {
+        jPanel = new JPanel();
+        jPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        jPanel.setPreferredSize(new Dimension(800, 600));
+        jPanel.setLayout(new GridLayout(0, 3, 1, 1));
 
-        jPanel.add(labelPlayer1Well);
+        JLabel jLabelChooseAIHuman, jLabelChooseAILvl, jLabelPlayer1, jLabelPlayer2, jLabelChooseAlgorithm;
+        JButton jButtonPlay, jButtonExit, jButtonHumanAI1, jButtonHumanAI2, jButtonAIAlgorithm1, jButtonAIAlgorithm2;
+
+        JSpinner jSpinnerAILvl1, jSpinnerAILvl2;
+
+        jLabelChooseAIHuman = new JLabel("Wybierz typ gracza.");
+        jLabelChooseAILvl = new JLabel("Wybierz poziom komputera.");
+        jLabelPlayer1 = new JLabel("Gracz 1", SwingConstants.CENTER);
+        jLabelPlayer2 = new JLabel("Gracz 2", SwingConstants.CENTER);
+        jLabelChooseAlgorithm = new JLabel("Wybierz algorytm AI.");
+        jButtonExit = new JButton();
+        jButtonHumanAI1 = new JButton();
+        jButtonHumanAI2 = new JButton();
+        jButtonPlay = new JButton();
+        jButtonAIAlgorithm1 = new JButton();
+        jButtonAIAlgorithm2 = new JButton();
+
+        jButtonExit.setText("Wyjście");
+        jButtonPlay.setText("Graj");
+        jButtonHumanAI1.setText("Człowiek");
+        jButtonHumanAI2.setText("Człowiek");
+        jButtonAIAlgorithm1.setText("Min-Max");
+        jButtonAIAlgorithm2.setText("Min-Max");
+        jSpinnerAILvl1 = new JSpinner(new SpinnerNumberModel(2, 1, 5, 1));
+        jSpinnerAILvl2 = new JSpinner(new SpinnerNumberModel(2, 1, 5, 1));
+
+        jButtonAIAlgorithm1.setEnabled(false);
+        jSpinnerAILvl1.setEnabled(false);
+
+        jButtonAIAlgorithm2.setEnabled(false);
+        jSpinnerAILvl2.setEnabled(false);
+
+        jButtonExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exitGame = true;
+                jFrame.getDefaultCloseOperation();
+                synchronized (GUIBoard.this) {
+                    jFrame.dispose();
+                    GUIBoard.this.notify();
+                }
+            }
+        });
+
+        jButtonPlay.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                player1 = new Player(1, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl1.getValue(), 0);
+                player2 = new Player(2, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), 0);
+                game = new Game(board, player1, player2);
+                synchronized (GUIBoard.this) {
+                    jFrame.dispose();
+                    GUIBoard.this.notify();
+                }
+            }
+        });
+
+        jButtonHumanAI1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jButtonHumanAI1.getText().equals("Człowiek")) {
+                    jButtonHumanAI1.setText("Komputer");
+                    jButtonAIAlgorithm1.setEnabled(true);
+                    jSpinnerAILvl1.setEnabled(true);
+                } else {
+                    jButtonHumanAI1.setText("Człowiek");
+                    jButtonAIAlgorithm1.setEnabled(false);
+                    jSpinnerAILvl1.setEnabled(false);
+                }
+            }
+        });
+        jButtonHumanAI2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jButtonHumanAI2.getText().equals("Człowiek")) {
+                    jButtonHumanAI2.setText("Komputer");
+                    jButtonAIAlgorithm2.setEnabled(true);
+                    jSpinnerAILvl2.setEnabled(true);
+                } else {
+                    jButtonHumanAI2.setText("Człowiek");
+                    jButtonAIAlgorithm2.setEnabled(false);
+                    jSpinnerAILvl2.setEnabled(false);
+                }
+            }
+        });
+
+        jButtonAIAlgorithm1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jButtonAIAlgorithm1.getText().equals("Min-Max")) {
+                    jButtonAIAlgorithm1.setText("Alpha-Beta");
+                } else {
+                    jButtonAIAlgorithm1.setText("Min-Max");
+                }
+            }
+        });
+        jButtonAIAlgorithm2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jButtonAIAlgorithm2.getText().equals("Min-Max")) {
+                    jButtonAIAlgorithm2.setText("Alpha-Beta");
+                } else {
+                    jButtonAIAlgorithm2.setText("Min-Max");
+                }
+            }
+        });
         jPanel.add(new JLabel());
-        jPanel.add(buttonPlayer1_0);
-        jPanel.add(buttonPlayer1_1);
-        jPanel.add(buttonPlayer1_2);
-        jPanel.add(buttonPlayer1_3);
-        jPanel.add(buttonPlayer1_4);
-        jPanel.add(buttonPlayer1_5);
-
+        jPanel.add(jLabelPlayer1);
+        jPanel.add(jLabelPlayer2);
+        jPanel.add(jLabelChooseAIHuman);
+        jPanel.add(jButtonHumanAI1);
+        jPanel.add(jButtonHumanAI2);
+        jPanel.add(jLabelChooseAILvl);
+        jPanel.add(jSpinnerAILvl1);
+        jPanel.add(jSpinnerAILvl2);
+        jPanel.add(jLabelChooseAlgorithm);
+        jPanel.add(jButtonAIAlgorithm1);
+        jPanel.add(jButtonAIAlgorithm2);
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(jButtonPlay);
+        jPanel.add(jButtonExit);
+        jPanel.setVisible(true);
         jFrame.add(jPanel, BorderLayout.CENTER);
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setTitle("Mankala Game");
+        //updateUI ??
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);
+    }
+
+    public void makeBoard(Board board) {
+        jFrame.dispose();
+        jPanelBoard.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        jPanelBoard.setPreferredSize(new Dimension(800, 340));
+        jPanelBoard.setLayout(new GridLayout(0, 8, 1, 1));
+
+        jPanelBoard.add(new JLabel());
+        jPanelBoard.add(buttonPlayer2_0);
+        jPanelBoard.add(buttonPlayer2_1);
+        jPanelBoard.add(buttonPlayer2_2);
+        jPanelBoard.add(buttonPlayer2_3);
+        jPanelBoard.add(buttonPlayer2_4);
+        jPanelBoard.add(buttonPlayer2_5);
+        jPanelBoard.add(new JLabel());
+        jPanelBoard.add(labelPlayer2Well);
+
+        for (int i = 0; i < 6; i++) {
+            jPanelBoard.add(new JLabel());
+        }
+
+        jPanelBoard.add(labelPlayer1Well);
+        jPanelBoard.add(new JLabel());
+        jPanelBoard.add(buttonPlayer1_0);
+        jPanelBoard.add(buttonPlayer1_1);
+        jPanelBoard.add(buttonPlayer1_2);
+        jPanelBoard.add(buttonPlayer1_3);
+        jPanelBoard.add(buttonPlayer1_4);
+        jPanelBoard.add(buttonPlayer1_5);
+        jPanelBoard.setVisible(true);
+
+        jFrame.getContentPane().removeAll();
+        jFrame.setTitle("new Mankala Game");
+        jFrame.add(jPanelBoard, BorderLayout.CENTER);
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setVisible(true);
+    }
+
+    public void gameFinishScreen(Board board) {
+        jFrame.dispose();
+        jPanel = new JPanel();
+        jPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        jPanel.setPreferredSize(new Dimension(800, 600));
+        jPanel.setLayout(new GridLayout(0, 2, 1, 1));
+        JButton jButtonReturn = new JButton();
+        JLabel jLabelWinner;
+        if (board.getPlayer1well() == board.getPlayer2well()) {
+            jLabelWinner = new JLabel("Remis");
+        } else if (board.getPlayer1well() > board.getPlayer2well()) {
+            jLabelWinner = new JLabel("Gratulacje, wygrał gracz 1.");
+        } else if (board.getPlayer1well() < board.getPlayer2well()) {
+            jLabelWinner = new JLabel("Gratulacje, wygrał gracz 2.");
+        } else {
+            jLabelWinner = new JLabel("Error: nie da sie wskazać zwycięzcy.");
+            System.out.println("Error: nie da sie wskazać zwycięzcy");
+        }
+        jButtonReturn.setText("Powrót");
+
+        jButtonReturn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                replay = true;
+                jFrame.dispose();
+                synchronized (GUIBoard.this) {
+                    GUIBoard.this.notify();
+                }
+            }
+        });
+
+        jPanel.add(new JLabel());
+        jPanel.add(jLabelWinner);
+        jPanel.add(new JLabel("Gracz 1: "));
+        jPanel.add(new JLabel("" + board.getPlayer1well()));
+        jPanel.add(new JLabel("Gracz 2: "));
+        jPanel.add(new JLabel("" + board.getPlayer2well()));
+        jPanel.add(new JLabel());
+        jPanel.add(jButtonReturn);
+
+        jFrame.getContentPane().removeAll();
+        jFrame.setTitle("Results");
+        jFrame.add(jPanel, BorderLayout.CENTER);
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setVisible(true);
+
+
     }
 
     public void updateBoard(Board board) {
@@ -99,8 +304,7 @@ public class GUIBoard {
         jPanel.updateUI();
     }
 
-    public void humanMakeMove() {
-
+    public void initialiseGameListeners() {
         buttonPlayer1_0.addActionListener(new ActionListener() {
                                               @Override
                                               public void actionPerformed(ActionEvent e) {
@@ -108,7 +312,6 @@ public class GUIBoard {
                                                   synchronized (GUIBoard.this) {
                                                       GUIBoard.this.notify();
                                                   }
-
                                               }
                                           }
         );
@@ -238,6 +441,7 @@ public class GUIBoard {
     }
 
     public void playersTurn(Player player) {
+        System.out.println("Kolorowanie");
         switch (player.getPlayerNumber()) {
             case 1:
                 buttonPlayer1_0.setBackground(Color.green);
@@ -298,5 +502,8 @@ public class GUIBoard {
                 buttonPlayer2_5.setEnabled(true);
                 break;
         }
+        jPanelBoard.revalidate();
+        jPanelBoard.repaint();
+        jFrame.repaint();
     }
 }

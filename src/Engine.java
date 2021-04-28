@@ -17,6 +17,45 @@ public class Engine {
         return 0;
     }
 
+    public boolean isGameOver(Board board, int player) {
+        if (player == 1) {
+            for (int i = 0; i < board.getPlayer1side().length; i++) {
+                System.out.print(board.getPlayer1side()[i] + " ");
+                if (board.getPlayer1side()[i] > 0) {
+                    return false;
+                }
+            }
+        } else if (player == 2) {
+            for (int i = 0; i < board.getPlayer2side().length; i++) {
+                if (board.getPlayer2side()[i] > 0) {
+                    return false;
+                }
+            }
+        } else {
+            System.out.println("Error: Wrong player number!");
+            return false;
+        }
+        board.gameIsOver();
+        gameEndsPlayerHasNoMoves(board, player);
+        return true;
+    }
+
+    public void gameEndsPlayerHasNoMoves(Board board, int player) {
+        if (player == 1) {
+            for (int i = 0; i < board.getPlayer2side().length; i++) {
+                board.setPlayer2well(board.getPlayer2well() + board.getPlayer2side()[i]);
+                board.getPlayer2side()[i] = 0;
+            }
+        } else if (player == 2) {
+            for (int i = 0; i < board.getPlayer1side().length; i++) {
+                board.setPlayer1well(board.getPlayer1well() + board.getPlayer1side()[i]);
+                board.getPlayer1side()[i] = 0;
+            }
+        } else {
+            System.out.println("Error: Wrong player number!");
+        }
+    }
+
     public boolean isMovePossible(Board board, int player, int chosenHole) {
         if (player == 1) {
             if (board.getPlayer1side()[chosenHole] == 0) {
@@ -37,7 +76,6 @@ public class Engine {
     }
 
 
-
     protected int makeMoveAI(Board board, Player player) { //moveAlgorithm min-max - 0, alpha-beta - 1
         boolean maximizingPlayer;
         if (player.getPlayerNumber() == 1) {
@@ -48,9 +86,9 @@ public class Engine {
         int chosenMove = 0;
         switch (player.getMoveAlgorithm()) {
             case 0:
-                for(int i=0;i<board.getPlayer1side().length;i++){
+                for (int i = 0; i < board.getPlayer1side().length; i++) {
                     Board boardAfterMove = new Board(board);
-                    if(isMovePossible(boardAfterMove, player.getPlayerNumber(), i)){
+                    if (isMovePossible(boardAfterMove, player.getPlayerNumber(), i)) {
 
                     }
                 }
