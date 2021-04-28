@@ -106,18 +106,24 @@ public class Engine {
         for (int i = 0; i < board.getPlayer1side().length; i++) {
             Board boardAfterMove = new Board(board);
             if (isMovePossible(boardAfterMove, player.getPlayerNumber(), i)) {
+
                 switch (player.getMoveAlgorithm()) {
                     //start min-max
                     case 0:
-                        int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer);
-                        System.out.println(currentValue);
+
                         if (maximizingPlayer) {
+                            boolean again = boardAfterMove.makeMove(i, 1);
+                            int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer==again);
+                            System.out.println(currentValue);
                             if (bestValue < currentValue) {
                                 chosenMove = i;
                                 bestValue = currentValue;
                             }
                             break;
                         } else {
+                            boolean again = boardAfterMove.makeMove(i, 2);
+                            int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer==again);
+                            System.out.println(currentValue);
                             if (bestValue > currentValue) {
                                 chosenMove = i;
                                 bestValue = currentValue;

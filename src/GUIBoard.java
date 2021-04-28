@@ -8,11 +8,11 @@ public class GUIBoard {
     JPanel jPanel, jPanelBoard;
     JButton buttonPlayer1_0, buttonPlayer1_1, buttonPlayer1_2, buttonPlayer1_3, buttonPlayer1_4, buttonPlayer1_5, buttonPlayer2_0, buttonPlayer2_1, buttonPlayer2_2, buttonPlayer2_3, buttonPlayer2_4, buttonPlayer2_5;
     JLabel labelPlayer2Well, labelPlayer1Well;
-    int chosenMove;
     Board board;
     Player player1;
     Player player2;
     Game game;
+    int chosenMove;
     boolean replay = false;
     boolean exitGame = false;
 
@@ -437,7 +437,6 @@ public class GUIBoard {
                                                   }
                                               }
                                           }
-
         );
     }
 

@@ -34,8 +34,10 @@ public class Game {
         players[0] = player1;
         players[1] = player2;
         int playerToMoveIndex = choosePlayerToStart();
-        while (!board.isGameOver()) {
-            while (makeMove(players[playerToMoveIndex], gui) /*&& !board.isGameOver()*/) {
+        while (!engine.isGameOver(board,players[playerToMoveIndex].getPlayerNumber())) {
+            boolean again = true;
+            while (again && !engine.isGameOver(board,players[playerToMoveIndex].getPlayerNumber()) ) {
+                again = makeMove(players[playerToMoveIndex], gui);
             }
             playerToMoveIndex = (playerToMoveIndex + 1) % 2;
         }
