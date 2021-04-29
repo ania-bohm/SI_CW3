@@ -1,9 +1,3 @@
-import com.sun.source.util.TaskEvent;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class Game {
     private Player player1, player2;
     private Board board;
@@ -29,7 +23,6 @@ public class Game {
     }
 
     public void gameplay(GUIBoard gui) {
-//        System.out.println("in gameplay");
         Player[] players = new Player[2];
         players[0] = player1;
         players[1] = player2;
@@ -48,14 +41,12 @@ public class Game {
     }
 
     public boolean makeMove(Player player, GUIBoard gui) {
-//        System.out.println("In makeMove");
         gui.playersTurn(player);
-
         boolean repeatMove;
+
         if (player.isHuman()) {
             synchronized (gui) {
                 try {
-//                    System.out.println("In gui wait in makeMove");
                     gui.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();

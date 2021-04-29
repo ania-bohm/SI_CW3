@@ -1,8 +1,8 @@
 public class Engine {
+
     public Engine(int evaluateBoardHeuristic) {
 
     }
-
 
     public int evaluateBoard(int evaluationHeuristics, Board board) {
 //        switch (evaluationHeuristics) {
@@ -30,11 +30,9 @@ public class Engine {
         return board.getPlayer1well() - board.getPlayer2well();
     }
 
-
     public boolean isGameOver(Board board, int player) {
         if (player == 1) {
             for (int i = 0; i < board.getPlayer1side().length; i++) {
-//                System.out.print(board.getPlayer1side()[i] + " ");
                 if (board.getPlayer1side()[i] > 0) {
                     return false;
                 }
@@ -89,7 +87,6 @@ public class Engine {
         }
     }
 
-
     protected int makeMoveAI(Board board, Player player) { //moveAlgorithm min-max - 0, alpha-beta - 1
         boolean maximizingPlayer;
         int chosenMove = -1;
@@ -114,7 +111,6 @@ public class Engine {
                         if (maximizingPlayer) {
                             boolean again = boardAfterMove.makeMove(i, 1);
                             int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer==again);
-                            System.out.println(currentValue);
                             if (bestValue < currentValue) {
                                 chosenMove = i;
                                 bestValue = currentValue;
@@ -123,7 +119,6 @@ public class Engine {
                         } else {
                             boolean again = boardAfterMove.makeMove(i, 2);
                             int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer==again);
-                            System.out.println(currentValue);
                             if (bestValue > currentValue) {
                                 chosenMove = i;
                                 bestValue = currentValue;
@@ -147,7 +142,7 @@ public class Engine {
         if (depth == 0 || this.isGameOver(board, player)) {
             return evaluateBoard(0, board);
         }
-        int value;//około plus nieskończoność
+        int value;
         if (maximizingPlayer) {
             value = -100000;
             for (int i = 0; i < board.getPlayer1side().length; i++) {

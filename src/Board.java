@@ -118,7 +118,6 @@ public class Board {
                         return false;
                     }
                 }
-
             }
 
         } else if (side == 2) {
@@ -174,7 +173,6 @@ public class Board {
                     }
                 }
             }
-
         }
 
         System.out.println("Something gone wrong, move not repeated");

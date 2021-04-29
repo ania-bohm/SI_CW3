@@ -4,17 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUIBoard {
+    Game game;
+    Board board;
+    int chosenMove;
+    boolean replay = false;
+    boolean exitGame = false;
+    //--------------------------
     JFrame jFrame;
     JPanel jPanel, jPanelBoard;
     JButton buttonPlayer1_0, buttonPlayer1_1, buttonPlayer1_2, buttonPlayer1_3, buttonPlayer1_4, buttonPlayer1_5, buttonPlayer2_0, buttonPlayer2_1, buttonPlayer2_2, buttonPlayer2_3, buttonPlayer2_4, buttonPlayer2_5;
     JLabel labelPlayer2Well, labelPlayer1Well;
-    Board board;
-    Player player1;
-    Player player2;
-    Game game;
-    int chosenMove;
-    boolean replay = false;
-    boolean exitGame = false;
+
 
     public GUIBoard() {
         jFrame = new JFrame();
@@ -112,8 +112,8 @@ public class GUIBoard {
         jButtonPlay.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                player1 = new Player(1, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl1.getValue(), 0);
-                player2 = new Player(2, jButtonHumanAI2.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), 0);
+                Player player1 = new Player(1, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl1.getValue(), 0);
+                Player player2 = new Player(2, jButtonHumanAI2.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), 0);
 
                 game = new Game(board, player1, player2);
                 synchronized (GUIBoard.this) {
