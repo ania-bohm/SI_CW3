@@ -1,9 +1,13 @@
+import java.util.Random;
+
 public class Engine {
+
 
     public Engine(int evaluateBoardHeuristic) {
 
     }
 
+    // funkcja oceny
     public int evaluateBoard(int evaluationHeuristics, Board board) {
 //        switch (evaluationHeuristics) {
 //            case 0:
@@ -91,6 +95,10 @@ public class Engine {
         boolean maximizingPlayer;
         int chosenMove = -1;
         int bestValue;
+        if (board.isFirstMove) {
+            board.isFirstMove = false;
+            return (new Random()).nextInt(6);
+        }
 
         if (player.getPlayerNumber() == 1) {
             maximizingPlayer = true;
@@ -110,7 +118,7 @@ public class Engine {
 
                         if (maximizingPlayer) {
                             boolean again = boardAfterMove.makeMove(i, 1);
-                            int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer==again);
+                            int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer == again);
                             if (bestValue < currentValue) {
                                 chosenMove = i;
                                 bestValue = currentValue;
@@ -118,7 +126,7 @@ public class Engine {
                             break;
                         } else {
                             boolean again = boardAfterMove.makeMove(i, 2);
-                            int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer==again);
+                            int currentValue = minMax(boardAfterMove, player.getLvlAI(), maximizingPlayer == again);
                             if (bestValue > currentValue) {
                                 chosenMove = i;
                                 bestValue = currentValue;

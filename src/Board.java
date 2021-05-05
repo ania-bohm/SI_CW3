@@ -3,6 +3,7 @@ public class Board {
     private int[] player1side, player2side;
     private int player1well, player2well;
     private boolean gameOver;
+    boolean isFirstMove = true;
 
     public Board(int numberOfPlayerHoles) {
         player1side = new int[numberOfPlayerHoles];

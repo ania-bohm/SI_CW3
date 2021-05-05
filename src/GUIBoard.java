@@ -285,8 +285,19 @@ public class GUIBoard {
 
 
     }
-
+    public void moveMade(int chosenMove, int player){
+        JButton[] side1buttons = new JButton[]{buttonPlayer1_0, buttonPlayer1_1, buttonPlayer1_2, buttonPlayer1_3, buttonPlayer1_4, buttonPlayer1_5};
+        JButton[] side2buttons = new JButton[]{buttonPlayer2_0, buttonPlayer2_1, buttonPlayer2_2, buttonPlayer2_3, buttonPlayer2_4, buttonPlayer2_5};
+        if(player == 1){
+            side1buttons[chosenMove].setBackground(Color.ORANGE);
+        }
+        else{
+            side2buttons[chosenMove].setBackground(Color.ORANGE);
+        }
+        jPanelBoard.repaint();
+     }
     public void updateBoard(Board board) {
+
         labelPlayer1Well.setText(String.valueOf(board.getPlayer1well()));
         labelPlayer2Well.setText(String.valueOf(board.getPlayer2well()));
 
@@ -302,7 +313,7 @@ public class GUIBoard {
         buttonPlayer2_3.setText(String.valueOf(board.getPlayer2side()[3]));
         buttonPlayer2_4.setText(String.valueOf(board.getPlayer2side()[4]));
         buttonPlayer2_5.setText(String.valueOf(board.getPlayer2side()[5]));
-        jPanel.updateUI();
+        jPanelBoard.repaint();
     }
 
     public void initialiseGameListeners() {
