@@ -3,12 +3,15 @@ public class Player {
     private int lvlAI;
     private int playerNumber;
     private int moveAlgorithm;
+    private Measurements measurements;
+
 
     public Player(int playerNumber, boolean isHuman, int lvlAI, int moveAlgorithm) {
         this.isHuman = isHuman;
         this.lvlAI = lvlAI;
         this.playerNumber = playerNumber;
         this.moveAlgorithm = moveAlgorithm;
+        this.measurements = new Measurements();
     }
 
     public boolean isHuman() {
@@ -25,5 +28,9 @@ public class Player {
 
     public int getMoveAlgorithm() {
         return moveAlgorithm;
+    }
+
+    public Measurements getMeasurements() {
+        return measurements;
     }
 }

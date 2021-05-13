@@ -3,22 +3,31 @@ import java.util.Random;
 public class Engine {
 
 
-    public Engine(int evaluateBoardHeuristic) {
+    int[] player1Weights, player2Weights;
 
+    public Engine(int[] player1Weights, int[] player2Weights) {
+        this.player1Weights = player1Weights;
+        this.player2Weights = player2Weights;
     }
 
     // funkcja oceny
-    public int evaluateBoard(int evaluationHeuristics, Board board) {
-//        switch (evaluationHeuristics) {
-//            case 0:
-//                break;
-//            case 1:
-//                break;
-//            case 2:
-//                break;
-//        }
+    public int evaluateBoard(Board board, boolean isPlayer1) {
+        int evaluation = 0;
 
-        return (evaluateBoardWinnerHeuristic(board) + evaluateBoardWellDifferenceHeuristic(board));
+        if (isPlayer1) {
+            evaluation+= evaluateBoardWinnerHeuristic(board)*player1Weights[0];
+            evaluation+= evaluateBoardWellDifferenceHeuristic(board)*player1Weights[1];
+            evaluation+= evaluateBoardCloseToHomeHeuristic(board)*player1Weights[2];
+            evaluation+= evaluateBoardMidHolesHeuristic(board)*player1Weights[3];
+            evaluation+= evaluateBoardFarFromHomeHeuristic(board)*player1Weights[4];
+        } else {
+            evaluation+= evaluateBoardWinnerHeuristic(board)*player1Weights[0];
+            evaluation+= evaluateBoardWellDifferenceHeuristic(board)*player1Weights[1];
+            evaluation+= evaluateBoardCloseToHomeHeuristic(board)*player1Weights[2];
+            evaluation+= evaluateBoardMidHolesHeuristic(board)*player1Weights[3];
+            evaluation+= evaluateBoardFarFromHomeHeuristic(board)*player1Weights[4];
+        }
+        return evaluation;
     }
 
     public int evaluateBoardWinnerHeuristic(Board board) {
@@ -33,6 +42,19 @@ public class Engine {
     public int evaluateBoardWellDifferenceHeuristic(Board board) {
         return board.getPlayer1well() - board.getPlayer2well();
     }
+
+    public int evaluateBoardCloseToHomeHeuristic(Board board) {
+        return (board.getPlayer1side()[4] + board.getPlayer1side()[5]) - (board.getPlayer2side()[0] + board.getPlayer2side()[1]);
+    }
+
+    public int evaluateBoardMidHolesHeuristic(Board board) {
+        return (board.getPlayer1side()[2] + board.getPlayer1side()[3]) - (board.getPlayer2side()[2] + board.getPlayer2side()[3]);
+    }
+
+    public int evaluateBoardFarFromHomeHeuristic(Board board) {
+        return (board.getPlayer1side()[1] + board.getPlayer1side()[2]) - (board.getPlayer2side()[4] + board.getPlayer2side()[5]);
+    }
+
 
     public boolean isGameOver(Board board, int player) {
         if (player == 1) {
@@ -133,6 +155,26 @@ public class Engine {
                             }
                         }
                         break;
+
+                        //start alpha-beta
+                    case 1:
+                        if (maximizingPlayer) {
+                            boolean again = boardAfterMove.makeMove(i, 1);
+                            int currentValue = alphaBeta(boardAfterMove, player.getLvlAI(), maximizingPlayer == again,-1000000, 1000000);
+                            if (bestValue < currentValue) {
+                                chosenMove = i;
+                                bestValue = currentValue;
+                            }
+                            break;
+                        } else {
+                            boolean again = boardAfterMove.makeMove(i, 2);
+                            int currentValue = alphaBeta(boardAfterMove, player.getLvlAI(), maximizingPlayer == again,-1000000, 1000000);
+                            if (bestValue > currentValue) {
+                                chosenMove = i;
+                                bestValue = currentValue;
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -148,7 +190,7 @@ public class Engine {
             player = 2;
         }
         if (depth == 0 || this.isGameOver(board, player)) {
-            return evaluateBoard(0, board);
+            return evaluateBoard(board, maximizingPlayer);
         }
         int value;
         if (maximizingPlayer) {
@@ -173,8 +215,45 @@ public class Engine {
         return value;
     }
 
-    public int alphaBeta() {
-        return 0;
+    public int alphaBeta(Board board, int depth, boolean maximizingPlayer, int alpha, int beta) {
+        int player;
+        if (maximizingPlayer) {
+            player = 1;
+        } else {
+            player = 2;
+        }
+        if (depth == 0 || this.isGameOver(board, player)) {
+            return evaluateBoard(board, maximizingPlayer);
+        }
+        int value;
+        if (maximizingPlayer) {
+            value = -100000;
+            for (int i = 0; i < board.getPlayer1side().length; i++) {
+                Board boardAfterMove = new Board(board);
+                if (isMovePossible(boardAfterMove, 1, i)) {
+                    boolean again = boardAfterMove.makeMove(i, 1);
+                    value = Math.max(value, alphaBeta(boardAfterMove, depth - 1, maximizingPlayer == again, alpha, beta));
+                    alpha = Math.max(alpha, value);
+                    if (alpha >= beta) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            value = 100000;
+            for (int i = 0; i < board.getPlayer2side().length; i++) {
+                Board boardAfterMove = new Board(board);
+                if (isMovePossible(boardAfterMove, 2, i)) {
+                    boolean again = boardAfterMove.makeMove(i, 2);
+                    value = Math.min(value, alphaBeta(boardAfterMove, depth - 1, maximizingPlayer == again, alpha, beta));
+                    beta = Math.min(beta, value);
+                    if (beta <= alpha) {
+                        break;
+                    }
+                }
+            }
+        }
+        return value;
     }
 
 }

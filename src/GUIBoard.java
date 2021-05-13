@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class GUIBoard {
     Game game;
@@ -62,19 +63,30 @@ public class GUIBoard {
     public void gameStartScreen() {
         jPanel = new JPanel();
         jPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        jPanel.setPreferredSize(new Dimension(800, 600));
+        jPanel.setPreferredSize(new Dimension(800, 700));
         jPanel.setLayout(new GridLayout(0, 3, 1, 1));
 
-        JLabel jLabelChooseAIHuman, jLabelChooseAILvl, jLabelPlayer1, jLabelPlayer2, jLabelChooseAlgorithm;
+        JLabel jLabelChooseAIHuman, jLabelChooseAILvl, jLabelPlayer1, jLabelPlayer2, jLabelChooseAlgorithm,
+                jLabelWinnerHeuristic, jLabelWellDifferenceHeuristic, jLabelCloseToHomeDifferenceHeuristic,
+                jLabelFarFromHomeDifferenceHeuristic, jLabelMidHolesDifferenceHeuristic;
         JButton jButtonPlay, jButtonExit, jButtonHumanAI1, jButtonHumanAI2, jButtonAIAlgorithm1, jButtonAIAlgorithm2;
 
-        JSpinner jSpinnerAILvl1, jSpinnerAILvl2;
+        JSpinner jSpinnerAILvl1, jSpinnerAILvl2, jSpinnerWinnerHeuristicWeight1, jSpinnerWellDifferenceWeight1,
+                jSpinnerWinnerHeuristicWeight2, jSpinnerWellDifferenceWeight2,
+                jSpinnerCloseToHomeWeight1, jSpinnerMidHolesWeight1, jSpinnerFarFromHomeWeight1,
+                jSpinnerCloseToHomeWeight2, jSpinnerMidHolesWeight2, jSpinnerFarFromHomeWeight2;
 
         jLabelChooseAIHuman = new JLabel("Wybierz typ gracza.");
         jLabelChooseAILvl = new JLabel("Wybierz poziom komputera.");
         jLabelPlayer1 = new JLabel("Gracz 1", SwingConstants.CENTER);
         jLabelPlayer2 = new JLabel("Gracz 2", SwingConstants.CENTER);
         jLabelChooseAlgorithm = new JLabel("Wybierz algorytm AI.");
+        jLabelWinnerHeuristic = new JLabel("Tylko wygrany (waga):");
+        jLabelWellDifferenceHeuristic = new JLabel("Różnica w studniach (waga):");
+        jLabelCloseToHomeDifferenceHeuristic = new JLabel("Wyróżnienie pól przy studni (waga):");
+        jLabelMidHolesDifferenceHeuristic = new JLabel("Wyróżnienie środkowych pól (waga):");
+        jLabelFarFromHomeDifferenceHeuristic = new JLabel("Wyróżnienie pól daleko od studni (waga):");
+
         jButtonExit = new JButton();
         jButtonHumanAI1 = new JButton();
         jButtonHumanAI2 = new JButton();
@@ -88,14 +100,38 @@ public class GUIBoard {
         jButtonHumanAI2.setText("Człowiek");
         jButtonAIAlgorithm1.setText("Min-Max");
         jButtonAIAlgorithm2.setText("Min-Max");
-        jSpinnerAILvl1 = new JSpinner(new SpinnerNumberModel(2, 1, 7, 1));
-        jSpinnerAILvl2 = new JSpinner(new SpinnerNumberModel(2, 1, 7, 1));
+
+        jSpinnerAILvl1 = new JSpinner(new SpinnerNumberModel(2, 1, 12, 1));
+        jSpinnerAILvl2 = new JSpinner(new SpinnerNumberModel(2, 1, 12, 1));
+
+        jSpinnerWinnerHeuristicWeight1 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerWellDifferenceWeight1 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerCloseToHomeWeight1 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerMidHolesWeight1 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerFarFromHomeWeight1 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+
+        jSpinnerWinnerHeuristicWeight2 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerWellDifferenceWeight2 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerCloseToHomeWeight2 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerMidHolesWeight2 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+        jSpinnerFarFromHomeWeight2 = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
+
 
         jButtonAIAlgorithm1.setEnabled(false);
         jSpinnerAILvl1.setEnabled(false);
+        jSpinnerWinnerHeuristicWeight1.setEnabled(false);
+        jSpinnerWellDifferenceWeight1.setEnabled(false);
+        jSpinnerCloseToHomeWeight1.setEnabled(false);
+        jSpinnerMidHolesWeight1.setEnabled(false);
+        jSpinnerFarFromHomeWeight1.setEnabled(false);
 
         jButtonAIAlgorithm2.setEnabled(false);
         jSpinnerAILvl2.setEnabled(false);
+        jSpinnerWinnerHeuristicWeight2.setEnabled(false);
+        jSpinnerWellDifferenceWeight2.setEnabled(false);
+        jSpinnerCloseToHomeWeight2.setEnabled(false);
+        jSpinnerMidHolesWeight2.setEnabled(false);
+        jSpinnerFarFromHomeWeight2.setEnabled(false);
 
         jButtonExit.addActionListener(new ActionListener() {
             @Override
@@ -112,10 +148,13 @@ public class GUIBoard {
         jButtonPlay.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Player player1 = new Player(1, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl1.getValue(), 0);
-                Player player2 = new Player(2, jButtonHumanAI2.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), 0);
-
-                game = new Game(board, player1, player2);
+                Player player1 = new Player(1, jButtonHumanAI1.getText().equals("Człowiek"), (int) jSpinnerAILvl1.getValue(), jButtonAIAlgorithm1.getText().equals("Alpha-Beta")? 1 : 0);
+                Player player2 = new Player(2, jButtonHumanAI2.getText().equals("Człowiek"), (int) jSpinnerAILvl2.getValue(), jButtonAIAlgorithm2.getText().equals("Alpha-Beta")? 1 : 0);
+                int [] p1Weights = {(int)jSpinnerWinnerHeuristicWeight1.getValue(),(int) jSpinnerWellDifferenceWeight1.getValue(),
+                        (int) jSpinnerCloseToHomeWeight1.getValue(),(int) jSpinnerMidHolesWeight1.getValue(), (int) jSpinnerFarFromHomeWeight1.getValue()};
+                int [] p2Weights = {(int)jSpinnerWinnerHeuristicWeight2.getValue(),(int) jSpinnerWellDifferenceWeight2.getValue(),
+                        (int) jSpinnerCloseToHomeWeight2.getValue(),(int) jSpinnerMidHolesWeight2.getValue(), (int) jSpinnerFarFromHomeWeight2.getValue()};
+                game = new Game(board, player1, player2, p1Weights, p2Weights);
                 synchronized (GUIBoard.this) {
                     jFrame.dispose();
                     GUIBoard.this.notify();
@@ -130,10 +169,21 @@ public class GUIBoard {
                     jButtonHumanAI1.setText("Komputer");
                     jButtonAIAlgorithm1.setEnabled(true);
                     jSpinnerAILvl1.setEnabled(true);
+                    jSpinnerWinnerHeuristicWeight1.setEnabled(true);
+                    jSpinnerWellDifferenceWeight1.setEnabled(true);
+                    jSpinnerCloseToHomeWeight1.setEnabled(true);
+                    jSpinnerMidHolesWeight1.setEnabled(true);
+                    jSpinnerFarFromHomeWeight1.setEnabled(true);
+
                 } else {
                     jButtonHumanAI1.setText("Człowiek");
                     jButtonAIAlgorithm1.setEnabled(false);
                     jSpinnerAILvl1.setEnabled(false);
+                    jSpinnerWinnerHeuristicWeight1.setEnabled(false);
+                    jSpinnerWellDifferenceWeight1.setEnabled(false);
+                    jSpinnerCloseToHomeWeight1.setEnabled(false);
+                    jSpinnerMidHolesWeight1.setEnabled(false);
+                    jSpinnerFarFromHomeWeight1.setEnabled(false);
                 }
             }
         });
@@ -144,10 +194,20 @@ public class GUIBoard {
                     jButtonHumanAI2.setText("Komputer");
                     jButtonAIAlgorithm2.setEnabled(true);
                     jSpinnerAILvl2.setEnabled(true);
+                    jSpinnerWinnerHeuristicWeight2.setEnabled(true);
+                    jSpinnerWellDifferenceWeight2.setEnabled(true);
+                    jSpinnerCloseToHomeWeight2.setEnabled(true);
+                    jSpinnerMidHolesWeight2.setEnabled(true);
+                    jSpinnerFarFromHomeWeight2.setEnabled(true);
                 } else {
                     jButtonHumanAI2.setText("Człowiek");
                     jButtonAIAlgorithm2.setEnabled(false);
                     jSpinnerAILvl2.setEnabled(false);
+                    jSpinnerWinnerHeuristicWeight2.setEnabled(false);
+                    jSpinnerWellDifferenceWeight2.setEnabled(false);
+                    jSpinnerCloseToHomeWeight2.setEnabled(false);
+                    jSpinnerMidHolesWeight2.setEnabled(false);
+                    jSpinnerFarFromHomeWeight2.setEnabled(false);
                 }
             }
         });
@@ -187,12 +247,34 @@ public class GUIBoard {
         jPanel.add(new JLabel());
         jPanel.add(new JLabel());
         jPanel.add(new JLabel());
+        jPanel.add(new JLabel("Heurystyki oceny planszy"));
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+
+        jPanel.add(jLabelWinnerHeuristic);
+        jPanel.add(jSpinnerWinnerHeuristicWeight1);
+        jPanel.add(jSpinnerWinnerHeuristicWeight2);
+        jPanel.add(jLabelWellDifferenceHeuristic);
+        jPanel.add(jSpinnerWellDifferenceWeight1);
+        jPanel.add(jSpinnerWellDifferenceWeight2);
+        jPanel.add(jLabelCloseToHomeDifferenceHeuristic);
+        jPanel.add(jSpinnerCloseToHomeWeight1);
+        jPanel.add(jSpinnerCloseToHomeWeight2);
+        jPanel.add(jLabelMidHolesDifferenceHeuristic);
+        jPanel.add(jSpinnerMidHolesWeight1);
+        jPanel.add(jSpinnerMidHolesWeight2);
+        jPanel.add(jLabelFarFromHomeDifferenceHeuristic);
+        jPanel.add(jSpinnerFarFromHomeWeight1);
+        jPanel.add(jSpinnerFarFromHomeWeight2);
+
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
+        jPanel.add(new JLabel());
         jPanel.add(new JLabel());
         jPanel.add(jButtonPlay);
         jPanel.add(jButtonExit);
         jPanel.setVisible(true);
         jFrame.add(jPanel, BorderLayout.CENTER);
-        //updateUI ??
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);
@@ -282,22 +364,20 @@ public class GUIBoard {
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setVisible(true);
-
-
     }
-    public void moveMade(int chosenMove, int player){
+
+    public void moveMade(int chosenMove, int player) {
         JButton[] side1buttons = new JButton[]{buttonPlayer1_0, buttonPlayer1_1, buttonPlayer1_2, buttonPlayer1_3, buttonPlayer1_4, buttonPlayer1_5};
         JButton[] side2buttons = new JButton[]{buttonPlayer2_0, buttonPlayer2_1, buttonPlayer2_2, buttonPlayer2_3, buttonPlayer2_4, buttonPlayer2_5};
-        if(player == 1){
+        if (player == 1) {
             side1buttons[chosenMove].setBackground(Color.ORANGE);
-        }
-        else{
+        } else {
             side2buttons[chosenMove].setBackground(Color.ORANGE);
         }
         jPanelBoard.repaint();
-     }
-    public void updateBoard(Board board) {
+    }
 
+    public void updateBoard(Board board) {
         labelPlayer1Well.setText(String.valueOf(board.getPlayer1well()));
         labelPlayer2Well.setText(String.valueOf(board.getPlayer2well()));
 

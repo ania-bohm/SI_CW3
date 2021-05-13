@@ -5,13 +5,11 @@ public class Game {
     private Board board;
     private Engine engine;
 
-
-
-    public Game(Board board, Player player1, Player player2) {
+    public Game(Board board, Player player1, Player player2, int[] player1Weights, int[] player2Weights) {
         this.board = board;
         this.player1 = player1;
         this.player2 = player2;
-        engine = new Engine(0);
+        engine = new Engine(player1Weights, player2Weights);
     }
 
     public Player getPlayer1() {
@@ -39,6 +37,12 @@ public class Game {
             }
             playerToMoveIndex = (playerToMoveIndex + 1) % 2;
         }
+        System.out.println("Gracz 1: ");
+        player1.getMeasurements().displayMeasurements();
+        System.out.println("Gracz 2: ");
+        player2.getMeasurements().displayMeasurements();
+        player1.getMeasurements().clear();
+        player2.getMeasurements().clear();
     }
 
     public int choosePlayerToStart() {
@@ -62,14 +66,17 @@ public class Game {
                     e.printStackTrace();
                 }
             }
-            if(board.isFirstMove){
+            if (board.isFirstMove) {
                 board.isFirstMove = false;
             }
             repeatMove = board.makeMove(gui.chosenMove, player.getPlayerNumber());
             gui.chosenMove = -1;
         } else {
+            player.getMeasurements().startTimer();
             int move = engine.makeMoveAI(getBoard(), player);
-            gui.moveMade(move,player.getPlayerNumber());
+            player.getMeasurements().stopTimer();
+            player.getMeasurements().plusCount();
+            gui.moveMade(move, player.getPlayerNumber());
 
             try {
                 Thread.sleep(1000);
